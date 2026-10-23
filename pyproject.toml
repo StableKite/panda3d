@@ -1,0 +1,4 @@
+[build-system]
+requires = ["panda3d-interrogate==0.11.2"]
+build-backend = "makepanda.pep517_backend"
+backend-path = ["."]

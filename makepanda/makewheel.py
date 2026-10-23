@@ -636,6 +636,32 @@ class WheelFile(object):
         self.zip_file.close()
 
 
+def get_wheel_metadata(version, platform):
+    """Return the same metadata for PEP 517 discovery and wheel assembly."""
+    METADATA["version"] = version
+    # Build out the metadata
+    details = METADATA["extensions"]["python.details"]
+    homepage = details["project_urls"]["Home"]
+    author = details["contacts"][0]["name"]
+    email = details["contacts"][0]["email"]
+    metadata = ''.join([
+        "Metadata-Version: {metadata_version}\n" \
+        "Name: {name}\n" \
+        "Version: {version}\n" \
+        "Summary: {summary}\n" \
+        "License: {license}\n".format(**METADATA),
+        "Home-page: {0}\n".format(homepage),
+    ] + ["Project-URL: {0}, {1}\n".format(*url) for url in PROJECT_URLS.items()] + [
+        "Author: {0}\n".format(author),
+        "Author-email: {0}\n".format(email),
+        "Platform: {0}\n".format(platform),
+    ] + ["Classifier: {0}\n".format(c) for c in METADATA['classifiers']])
+
+    metadata += '\n' + DESCRIPTION.strip() + '\n'
+
+    return metadata
+
+
 def makewheel(version, output_dir, platform=None):
     if sys.platform not in ("win32", "darwin") and not sys.platform.startswith("cygwin"):
         if not LocateBinary("patchelf"):
@@ -701,25 +727,7 @@ def makewheel(version, output_dir, platform=None):
     # Update relevant METADATA entries
     METADATA['version'] = version
 
-    # Build out the metadata
-    details = METADATA["extensions"]["python.details"]
-    homepage = details["project_urls"]["Home"]
-    author = details["contacts"][0]["name"]
-    email = details["contacts"][0]["email"]
-    metadata = ''.join([
-        "Metadata-Version: {metadata_version}\n" \
-        "Name: {name}\n" \
-        "Version: {version}\n" \
-        "Summary: {summary}\n" \
-        "License: {license}\n".format(**METADATA),
-        "Home-page: {0}\n".format(homepage),
-    ] + ["Project-URL: {0}, {1}\n".format(*url) for url in PROJECT_URLS.items()] + [
-        "Author: {0}\n".format(author),
-        "Author-email: {0}\n".format(email),
-        "Platform: {0}\n".format(platform),
-    ] + ["Classifier: {0}\n".format(c) for c in METADATA['classifiers']])
-
-    metadata += '\n' + DESCRIPTION.strip() + '\n'
+    metadata = get_wheel_metadata(version, platform)
 
     # Zip it up and name it the right thing
     whl = WheelFile('panda3d', version, platform)

@@ -2274,6 +2274,12 @@ def SdkLocatePython(prefer_thirdparty_python=False):
         SDK["PYTHON"] = locations.get_python_inc()
         SDK["PYTHONVERSION"] = "python" + locations.get_python_version() + abiflags
         SDK["PYTHONEXEC"] = os.path.realpath(sys.executable)
+        # Python may live outside the system compiler search paths (for
+        # example /opt/python315t). Use this interpreter's own SDK paths.
+        IncDirectory("PYTHON", SDK["PYTHON"])
+        python_libdir = locations.get_config_var("LIBDIR")
+        if python_libdir:
+            LibDirectory("PYTHON", python_libdir)
 
     if CrossCompiling():
         # We need a version of Python we can run.
