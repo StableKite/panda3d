@@ -1,0 +1,30 @@
+{
+  "source_commit": "6a8c341074db76a44ffee5eb2c613ee008a6f5d5",
+  "source_backend": "makepanda.pep517_backend",
+  "source_backend_path": [
+    "."
+  ],
+  "minimum_glibc": [
+    2,
+    39
+  ],
+  "source_project": "c3773b8f68f5156a84f96842d12ab3e15c9762a0c5111bdea523f92fa95208ba",
+  "delivery_paths": [
+    "_binary_wheel_backend.py",
+    "binary_wheels.json",
+    "README.binary-wheels.md",
+    "pyproject.toml",
+    "MANIFEST.in"
+  ],
+  "delivery_source_hashes": {
+    "_binary_wheel_backend.py": "fc4697ea1ee586c2ae3df2397be14ef13246f7b7b8f42485057e36c0852fe37a",
+    "README.binary-wheels.md": "05617ca74a60f542d4f2a146f8e5308158d123ba97856b6b3e0deebd3a5b1595",
+    "pyproject.toml": "a398536d531c77340cb43160f145701b471075eb5eccc1ce41f417148b0e8bce",
+    "MANIFEST.in": "0e719773b71c17496ad6c3a5b958c8a8c18bdbe1b4d5be6f1ebe7dd1e9a20553"
+  },
+  "artifact": {
+    "filename": "panda3d-1.11.0-cp315-cp315t-manylinux_2_39_x86_64.whl",
+    "url": "https://github.com/StableKite/panda3d/releases/download/cp315t-linux-r68-20261024/panda3d-1.11.0-cp315-cp315t-manylinux_2_39_x86_64.whl",
+    "sha256": "19d4342736e212563dd0f99520b2e14c617a5636026e39f95e78b3af13f804fa"
+  }
+}
