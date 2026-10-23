@@ -4,6 +4,7 @@ Generates a wheel (.whl) file from the output of makepanda.
 import json
 import sys
 import os
+import posixpath
 from os.path import join
 import zipfile
 import hashlib
@@ -93,7 +94,7 @@ MANYLINUX_LIBS = [
     "libGLESv2.so.2",
 ]
 
-# Binaries to never scan for dependencies on non-Windows systems.
+# Binaries whose external dependencies are supplied by the operating system.
 IGNORE_UNIX_DEPS_OF = [
     "panda3d_tools/pstats",
 ]
@@ -349,6 +350,19 @@ def scan_dependencies(pathname):
     return filenames
 
 
+
+def _library_rpath(target_path, dependency_paths):
+    """Find shared libraries at their actual, possibly deduplicated locations."""
+    paths = ["$ORIGIN"]
+    directory = posixpath.dirname(target_path)
+    for dependency in dependency_paths:
+        relative = posixpath.relpath(posixpath.dirname(dependency), directory)
+        entry = "$ORIGIN" if relative == "." else "$ORIGIN/" + relative
+        if entry not in paths:
+            paths.append(entry)
+    return ":".join(paths)
+
+
 class WheelFile(object):
     def __init__(self, name, version, platform):
         self.name = name
@@ -442,10 +456,7 @@ class WheelFile(object):
             (not ext and is_executable(source_path)):
 
             # Scan Unix dependencies.
-            if target_path not in IGNORE_UNIX_DEPS_OF:
-                deps = scan_dependencies(source_path)
-            else:
-                deps = []
+            deps = scan_dependencies(source_path)
 
             suffix = ''
             if '.so' in os.path.basename(source_path):
@@ -526,6 +537,7 @@ class WheelFile(object):
                 subprocess.call(["codesign", "-f", "-s", "-", temp.name])
             else:
                 # On other unixes, we just add dependencies normally.
+                mapped_dependencies = []
                 for dep in deps:
                     # Only include dependencies with relative path, for now.
                     if '/' in dep:
@@ -539,7 +551,14 @@ class WheelFile(object):
                     else:
                         target_dep = os.path.dirname(target_path) + '/' + dep
 
-                    self.consider_add_dependency(target_dep, dep)
+                    if target_path in IGNORE_UNIX_DEPS_OF:
+                        # Keep paths to already bundled Panda libraries even
+                        # when optional GUI dependencies are not bundled here.
+                        mapped_dependency = self.dep_paths.get(dep)
+                    else:
+                        mapped_dependency = self.consider_add_dependency(target_dep, dep)
+                    if mapped_dependency:
+                        mapped_dependencies.append(mapped_dependency)
 
                 subprocess.call([GetStrip(), "-s", temp.name])
 
@@ -551,9 +570,10 @@ class WheelFile(object):
                         pylib_name = "libpython" + get_config_var('LDVERSION') + ".so"
                         subprocess.call(["patchelf", "--add-needed", pylib_name, temp.name])
                 else:
-                    # On other systems, we use the rpath to force it to locate
-                    # dependencies in the same directory.
-                    subprocess.call(["patchelf", "--force-rpath", "--set-rpath", "$ORIGIN", temp.name])
+                    # Dependencies may already have been emitted into another
+                    # package (for example panda3d/ for panda3d_tools/).
+                    subprocess.check_call(["patchelf", "--force-rpath", "--set-rpath",
+                                           _library_rpath(target_path, mapped_dependencies), temp.name])
 
             source_path = temp.name
 
