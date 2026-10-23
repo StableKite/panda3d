@@ -598,6 +598,34 @@ def GetInterrogateDir():
             return INTERROGATE_DIR
 
         dir = os.path.join(GetOutputDir(), "tmp", "interrogate")
+        # PEP 517 already installed the declared SDK in an isolated environment.
+        # Keep a stable local copy so repeated pip invocations do not invalidate
+        # native bindings merely because the temporary environment path changed.
+        from importlib.metadata import distribution, PackageNotFoundError
+        import filecmp
+        try:
+            sdk = distribution("panda3d-interrogate")
+        except PackageNotFoundError:
+            sdk = None
+        if sdk is not None and sdk.files:
+            suffix = ".exe" if sys.platform == "win32" else ""
+            tools = ("interrogate/interrogate" + suffix,
+                     "interrogate_module/interrogate_module" + suffix)
+            if not all(os.path.isfile(sdk.locate_file(tool)) for tool in tools):
+                raise RuntimeError("The declared interrogate SDK is missing its native tools")
+            for entry in sdk.files:
+                if entry.is_absolute() or ".." in entry.parts:
+                    continue
+                source = sdk.locate_file(entry)
+                dest = os.path.join(dir, str(entry))
+                if not os.path.isfile(source):
+                    continue
+                if not os.path.isfile(dest) or not filecmp.cmp(source, dest, shallow=False):
+                    os.makedirs(os.path.dirname(dest), exist_ok=True)
+                    shutil.copy2(source, dest)
+            INTERROGATE_DIR = dir
+            return dir
+
         if not os.path.isdir(os.path.join(dir, "panda3d_interrogate-0.11.2.dist-info")):
             oscmd("\"%s\" -m pip install --force-reinstall --upgrade -t \"%s\" panda3d-interrogate==0.11.2" % (sys.executable, dir))
 
@@ -3828,7 +3856,7 @@ def TargetAdd(target, dummy=0, opts=[], input=[], dep=[], ipath=None, winrc=None
     ext = os.path.splitext(target)[1]
     if ext == ".in":
         if not CrossCompiling():
-            t.deps[FindLocation("interrogate.exe", [])] = 1
+            t.deps[GetInterrogate()] = 1
         t.deps[FindLocation("dtool_have_python.dat", [])] = 1
 
     if ext in (".obj", ".tlb", ".res", ".plugin", ".app") or ext in SUFFIX_DLL or ext in SUFFIX_LIB:
@@ -3836,7 +3864,7 @@ def TargetAdd(target, dummy=0, opts=[], input=[], dep=[], ipath=None, winrc=None
 
     if target.endswith(".obj") and any(x.endswith(".in") for x in input):
         if not CrossCompiling():
-            t.deps[FindLocation("interrogate_module.exe", [])] = 1
+            t.deps[GetInterrogateModule()] = 1
 
     if target.endswith(".pz") and not CrossCompiling():
         t.deps[FindLocation("pzip.exe", [])] = 1

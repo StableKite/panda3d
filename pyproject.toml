@@ -1,4 +1,4 @@
 [build-system]
-requires = ["panda3d-interrogate==0.11.2"]
+requires = ["panda3d-interrogate @ git+https://github.com/StableKite/interrogate.git"]
 build-backend = "makepanda.pep517_backend"
 backend-path = ["."]
