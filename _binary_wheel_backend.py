@@ -79,7 +79,8 @@ def _source():
 def get_requires_for_build_wheel(config_settings=None):
     if _asset(config_settings):
         return ['pip']
-    return _source().get_requires_for_build_wheel(config_settings)
+    hook = getattr(_source(), 'get_requires_for_build_wheel', None)
+    return hook(config_settings) if hook is not None else []
 
 
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):

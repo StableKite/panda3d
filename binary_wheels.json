@@ -14,13 +14,23 @@
     "binary_wheels.json",
     "README.binary-wheels.md",
     "pyproject.toml",
-    "MANIFEST.in"
+    "MANIFEST.in",
+    "makepanda/windows_sdk.py",
+    "makepanda/pep517_backend.py",
+    "makepanda/makepanda.py",
+    "makepanda/makepandacore.py",
+    "makepanda/makewheel.py"
   ],
   "delivery_source_hashes": {
-    "_binary_wheel_backend.py": "fc4697ea1ee586c2ae3df2397be14ef13246f7b7b8f42485057e36c0852fe37a",
-    "README.binary-wheels.md": "05617ca74a60f542d4f2a146f8e5308158d123ba97856b6b3e0deebd3a5b1595",
+    "_binary_wheel_backend.py": "e548d499e70cf0e95d4436f70698463e0fad6294059255acc62db2f6c4542690",
+    "README.binary-wheels.md": "d9ee1082c9aed61061cf3e1dd4bdcf34aa8cc70dd10efd0ebb365a8ac5ef4cc7",
     "pyproject.toml": "a398536d531c77340cb43160f145701b471075eb5eccc1ce41f417148b0e8bce",
-    "MANIFEST.in": "0e719773b71c17496ad6c3a5b958c8a8c18bdbe1b4d5be6f1ebe7dd1e9a20553"
+    "MANIFEST.in": "f9489beed847281431278fc852c2421ce6b7cbd5955f7a727f8364c2cb69825e",
+    "makepanda/windows_sdk.py": "1b168d6f44592d08816b6591b20c57833701a7145239629554151ad9e5ad27aa",
+    "makepanda/pep517_backend.py": "e8830eeb2bf68bd5637604cc2815318e38f9d70dfecf0bcd0cb29791cb6c543d",
+    "makepanda/makepanda.py": "c6df76eb4006c00b71a435b0fafa425200d7bb40e2221b3c51b8702c51746551",
+    "makepanda/makepandacore.py": "1aadd03767615fb154a406d9fa2a7618ef841b2016422e3d477192f68b73272a",
+    "makepanda/makewheel.py": "fe6873791ecb5f2570b2659e2a8ed06d9e35ecd60084749e6bfd4e25dbc3980f"
   },
   "artifact": {
     "filename": "panda3d-1.11.0-cp315-cp315t-manylinux_2_39_x86_64.whl",

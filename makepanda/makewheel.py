@@ -777,6 +777,10 @@ def makewheel(version, output_dir, platform=None):
     if is_windows:
         pylib_name = 'python{0}{1}{2}.dll'.format(sys.version_info[0], sys.version_info[1], suffix)
         pylib_path = os.path.join(get_config_var('BINDIR'), pylib_name)
+        if not CrossCompiling() and not os.path.isfile(pylib_path):
+            # A venv's BINDIR contains its launcher, while the interpreter DLL
+            # remains in the base installation.
+            pylib_path = os.path.join(sys.base_prefix, pylib_name)
     elif is_macosx:
         pylib_name = 'libpython{0}.{1}{2}.dylib'.format(sys.version_info[0], sys.version_info[1], suffix)
         pylib_path = os.path.join(get_config_var('LIBDIR'), pylib_name)

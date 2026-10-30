@@ -2156,6 +2156,10 @@ def SdkLocatePython(prefer_thirdparty_python=False):
 
             if sdkdir is None:
                 exit("Could not find a Python installation using these command line options.")
+        elif not CrossCompiling() and not prefer_thirdparty_python:
+            # A pip build uses the running interpreter's SDK, including when
+            # the executable lives in a venv and the headers live in its base.
+            sdkdir = sys.base_prefix
         else:
             sdkdir = GetThirdpartyBase() + "/win-python"
             sdkdir += "%d.%d" % sys.version_info[:2]
@@ -2169,6 +2173,8 @@ def SdkLocatePython(prefer_thirdparty_python=False):
 
         sdkdir = sdkdir.replace('\\', '/')
         SDK["PYTHON"] = sdkdir
+        use_running_python = (not CrossCompiling() and not prefer_thirdparty_python
+                              and not PkgHasCustomLocation("PYTHON"))
         SDK["PYTHONEXEC"] = SDK["PYTHON"] + "/python"
 
         gil_disabled = locations.get_config_var("Py_GIL_DISABLED")
@@ -2183,6 +2189,9 @@ def SdkLocatePython(prefer_thirdparty_python=False):
             SDK["PYTHONEXEC"] += "_d.exe"
         else:
             SDK["PYTHONEXEC"] += ".exe"
+
+        if use_running_python:
+            SDK["PYTHONEXEC"] = os.path.realpath(sys.executable)
 
         if (not os.path.isfile(SDK["PYTHONEXEC"])):
             exit("Could not find %s!" % SDK["PYTHONEXEC"])
@@ -2320,6 +2329,29 @@ def SdkLocatePython(prefer_thirdparty_python=False):
         print("Using Python %s build located at %s" % (SDK["PYTHONVERSION"][6:], SDK["PYTHON"]))
     else:
         print("Using Python %s" % (SDK["PYTHONVERSION"][6:]))
+
+def GetDefaultMsvcVersion():
+    """Select an installed toolset instead of assuming Visual Studio 2022."""
+    candidates = [LocateBinary("vswhere.exe")]
+    for program_files in (GetProgramFiles_x86(), GetProgramFiles()):
+        candidates.append(os.path.join(program_files, "Microsoft Visual Studio",
+                                       "Installer", "vswhere.exe"))
+    for candidate in candidates:
+        if candidate and os.path.isfile(candidate):
+            result = subprocess.run(
+                [candidate, "-latest", "-products", "*", "-requires",
+                 "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+                 "-property", "installationVersion"],
+                stdout=subprocess.PIPE, check=True, universal_newlines=True)
+            version = result.stdout.strip()
+            if version:
+                major = int(version.split('.')[0])
+                for toolset, info in sorted(MSVCVERSIONINFO.items(), reverse=True):
+                    if info["vsversion"][0] == major:
+                        return toolset
+            break
+    return (14, 3)
+
 
 def SdkLocateVisualStudio(version=(10,0)):
     if (GetHost() != "windows"): return

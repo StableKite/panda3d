@@ -309,8 +309,8 @@ def parseopts(args):
 
     if GetTarget() == 'windows':
         if not MSVC_VERSION:
-            print("No MSVC version specified. Defaulting to 14.3 (Visual Studio 2022).")
-            MSVC_VERSION = (14, 3)
+            MSVC_VERSION = GetDefaultMsvcVersion()
+            print("Automatically selected MSVC %d.%d." % MSVC_VERSION)
         else:
             try:
                 MSVC_VERSION = tuple(int(d) for d in MSVC_VERSION.split('.'))[:2]
@@ -318,6 +318,12 @@ def parseopts(args):
                     MSVC_VERSION += (0,)
             except:
                 usage("Invalid setting for --msvc-version")
+
+        if not WINDOWS_SDK:
+            windows_kits = GetRegistryKey(
+                "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", "KitsRoot10")
+            if windows_kits and os.path.isdir(windows_kits):
+                WINDOWS_SDK = "10"
 
         if MSVC_VERSION < (14, 1):
             warn_prefix = "%sERROR:%s " % (GetColor("red"), GetColor())

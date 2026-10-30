@@ -12,3 +12,17 @@ the source commit, artifact hash and the checked delivery metadata. Source
 builds retain their ordinary development-library prerequisites.
 
 These are engineering dependency artifacts, not a StableKite release.
+
+On Windows x86-64 CPython 3.15t, the source backend automatically obtains
+the official Panda3D 1.10.16 Windows tools archive when no thirdparty directory
+is present. It verifies the recorded 300183595-byte size and SHA256
+`c94d346ce486c65a4a251c72360155b7f4f4aa8e6fd702690b7a0aca8ed3616c`
+before extracting the third-party build inputs. Existing developer SDK
+directories are preserved. The full original `--everything` wheel recipe
+uses the running Python SDK and installed Visual Studio/Windows SDK, including
+when pip runs in a venv. No consumer build flag or separate Panda SDK setup is
+needed on this path; the system C++ build tools are still required.
+
+The Linux binary's native/runtime source snapshot remains unchanged. The
+manifest separately records these Windows build and packaging helpers, which
+do not change the Linux runtime, and keeps guarding every other source path.
