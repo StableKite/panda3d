@@ -8,6 +8,13 @@ import zipfile
 from pathlib import Path
 
 
+def get_requires_for_build_wheel(config_settings=None):
+    """Declare the ELF wheel packager used by the native source build."""
+    if sys.platform not in ("win32", "darwin") and not sys.platform.startswith("cygwin"):
+        return ["patchelf"]
+    return []
+
+
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
     source = Path(__file__).resolve().parents[1]
     suffix = getattr(sys, "abiflags", "")
