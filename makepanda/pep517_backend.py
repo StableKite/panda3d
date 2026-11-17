@@ -9,7 +9,9 @@ from pathlib import Path
 
 
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
-    source = Path(__file__).resolve().parents[1]
+    # Preserve a developer's short junction path on Windows. Resolving it
+    # exposes the long backing path to native tools with MAX_PATH limits.
+    source = Path(__file__).absolute().parents[1]
     suffix = getattr(sys, "abiflags", "")
     if not suffix and sysconfig.get_config_var('Py_GIL_DISABLED') == 1:
         suffix = 't'
@@ -43,7 +45,7 @@ def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
 def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):
     # Native compilation belongs to build_wheel, not dependency resolution.
     from sysconfig import get_platform
-    source = Path(__file__).resolve().parents[1]
+    source = Path(__file__).absolute().parents[1]
     sys.path.insert(0, str(source / "makepanda"))
     from makepandacore import GetMetadataValue
     from makewheel import get_wheel_metadata

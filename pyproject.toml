@@ -1,4 +1,4 @@
 [build-system]
 build-backend = "_binary_wheel_backend"
 backend-path = ["."]
-requires = ["panda3d-interrogate @ git+https://github.com/StableKite/interrogate.git"]
+requires = ["panda3d-interrogate @ git+https://github.com/StableKite/interrogate.git@fc79e5cba8c7f99b975252c47972a3efa8e5659a"]

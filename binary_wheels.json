@@ -8,7 +8,7 @@
     2,
     39
   ],
-  "source_project": "c3773b8f68f5156a84f96842d12ab3e15c9762a0c5111bdea523f92fa95208ba",
+  "source_project": "fcef20d57cc2e89f91503f7af71d2d6d672177d813ac49345f6ae6f73ab769c8",
   "delivery_paths": [
     "_binary_wheel_backend.py",
     "binary_wheels.json",
@@ -25,10 +25,10 @@
   "delivery_source_hashes": {
     "_binary_wheel_backend.py": "e548d499e70cf0e95d4436f70698463e0fad6294059255acc62db2f6c4542690",
     "README.binary-wheels.md": "d9ee1082c9aed61061cf3e1dd4bdcf34aa8cc70dd10efd0ebb365a8ac5ef4cc7",
-    "pyproject.toml": "a398536d531c77340cb43160f145701b471075eb5eccc1ce41f417148b0e8bce",
+    "pyproject.toml": "35df77843bbc5a3a1d5b799ef446a60ed59378008781d410a7687d98bcb432fa",
     "MANIFEST.in": "f9489beed847281431278fc852c2421ce6b7cbd5955f7a727f8364c2cb69825e",
     "makepanda/windows_sdk.py": "1b168d6f44592d08816b6591b20c57833701a7145239629554151ad9e5ad27aa",
-    "makepanda/pep517_backend.py": "e8830eeb2bf68bd5637604cc2815318e38f9d70dfecf0bcd0cb29791cb6c543d",
+    "makepanda/pep517_backend.py": "dfed6cbfe6af5186d4deeed846f653969c0e751bc69b7ae1245509d07f009e72",
     "makepanda/makepanda.py": "c6df76eb4006c00b71a435b0fafa425200d7bb40e2221b3c51b8702c51746551",
     "makepanda/makepandacore.py": "ca607e808f80e8a64c3862504ac41254ed04fd74d1db5043e04ad336d936f32d",
     "makepanda/makewheel.py": "fe6873791ecb5f2570b2659e2a8ed06d9e35ecd60084749e6bfd4e25dbc3980f",
