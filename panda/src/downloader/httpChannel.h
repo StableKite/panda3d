@@ -249,7 +249,7 @@ private:
                                             bool &cert_name_preapproved) const;
   bool validate_server_name(X509 *cert);
   static bool match_cert_name(const std::string &cert_name, const std::string &hostname);
-  static std::string get_x509_name_component(X509_NAME *name, int nid);
+  static std::string get_x509_name_component(const X509_NAME *name, int nid);
 
   void make_header();
   void make_proxy_request_text();

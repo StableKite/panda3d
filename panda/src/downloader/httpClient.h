@@ -155,7 +155,7 @@ private:
   void unload_client_certificate();
 
   static X509_NAME *parse_x509_name(std::string_view source);
-  static bool x509_name_subset(X509_NAME *name_a, X509_NAME *name_b);
+  static bool x509_name_subset(const X509_NAME *name_a, const X509_NAME *name_b);
 
   static void split_whitespace(std::string &a, std::string &b, std::string_view c);
 
